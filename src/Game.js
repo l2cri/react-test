@@ -2,10 +2,11 @@ import React, { useState } from "react";
 import Board from "./Board";
 import Moves from "./Moves";
 import calculateWinner from "./calculateWinner";
+import { useLocalStorage } from "./useLocalStorage";
 
 
 function Game () {
-  const [history, setHistory] = useState([{
+  const [history, setHistory] = useLocalStorage('history', [{
     squares: Array(9).fill(null),
     col: null,
     row: null,
@@ -20,6 +21,7 @@ function Game () {
 
   function handleClick(i, currentSquares) {
     const squares = [...currentSquares]
+    const historyInc = history.slice(0, stepNumber + 1)
     const [winner] = calculateWinner(squares)
    
     if(winner || squares[i]) {
@@ -27,12 +29,12 @@ function Game () {
     }
 
     squares[i] = xIsNext ? 'X' : 'O';
-    setHistory([...history, ...[{
+    setHistory([...historyInc, ...[{
         squares: squares,
         col: (i % 3) + 1,
         row: Math.floor(i / 3) + 1,
     }]]);
-    setStepNumber(history.length);
+    setStepNumber(historyInc.length);
     setxIsNext(!xIsNext);
   }
 
